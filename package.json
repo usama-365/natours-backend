@@ -1,0 +1,19 @@
+{
+  "name": "natours-node",
+  "version": "1.0.0",
+  "description": "Natours backend and API created in Node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usama-365/natours-node.git"
+  },
+  "author": "usama-365",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/usama-365/natours-node/issues"
+  },
+  "homepage": "https://github.com/usama-365/natours-node#readme"
+}
