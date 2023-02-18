@@ -2,19 +2,39 @@ const express = require("express");
 const fs = require("node:fs");
 
 const PORT = 3000;
+const TOURS_FILE_PATH = `${__dirname}/dev-data/data/tours-simple.json`;
 
 const app = express();
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`).toString());
+app.use(express.json());
+
+const tours = JSON.parse(fs.readFileSync(TOURS_FILE_PATH).toString());
 
 app.get("/api/v1/tours", (req, res) => {
     res.status(200).json({
-        status: 'success',
+        status: "success",
         results: tours.length,
         data: {
             tours: tours
         }
     });
 })
+
+app.post("/api/v1/tours", (req, res) => {
+    const newID = tours[tours.length - 1].id + 1;
+    const newTour = {
+        id: newID,
+        ...req.body
+    };
+    tours.push(newTour);
+    fs.writeFile(TOURS_FILE_PATH, JSON.stringify(tours), err => {
+        res.status(201).json({
+            status: "success",
+            data: {
+                tour: newTour
+            }
+        });
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running locally on port ${PORT}`);
