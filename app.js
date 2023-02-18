@@ -17,7 +17,23 @@ app.get("/api/v1/tours", (req, res) => {
             tours: tours
         }
     });
-})
+});
+
+app.get("/api/v1/tours/:id", (req, res) => {
+    const id = +req.params.id;
+    const tour = tours.find(tour => tour.id === id);
+    if (tour) res.status(200).json({
+        status: "successful",
+        data: {
+            tour: tour
+        }
+    }); else res.status(404).json({
+        status: "fail",
+        data: {
+            message: "Tour with that ID not found"
+        }
+    });
+});
 
 app.post("/api/v1/tours", (req, res) => {
     const newID = tours[tours.length - 1].id + 1;
@@ -26,7 +42,7 @@ app.post("/api/v1/tours", (req, res) => {
         ...req.body
     };
     tours.push(newTour);
-    fs.writeFile(TOURS_FILE_PATH, JSON.stringify(tours), err => {
+    fs.writeFile(TOURS_FILE_PATH, JSON.stringify(tours), () => {
         res.status(201).json({
             status: "success",
             data: {
