@@ -59,6 +59,13 @@ app.patch("/api/v1/tours/:id", (req, res) => {
     });
 });
 
+app.delete("/api/v1/tours/:id", (req, res) => {
+    res.status(204).json({
+        status: "successful",
+        data: null
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running locally on port ${PORT}`);
 });
