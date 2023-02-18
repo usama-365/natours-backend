@@ -52,6 +52,13 @@ app.post("/api/v1/tours", (req, res) => {
     });
 });
 
+app.patch("/api/v1/tours/:id", (req, res) => {
+    res.status(200).json({
+        status: "todo",
+        message: "Feature hasn't been implemented yet"
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running locally on port ${PORT}`);
 });
