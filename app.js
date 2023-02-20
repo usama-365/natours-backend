@@ -9,7 +9,7 @@ app.use(express.json());
 
 const tours = JSON.parse(fs.readFileSync(TOURS_FILE_PATH).toString());
 
-app.get("/api/v1/tours", (req, res) => {
+const getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
         results: tours.length,
@@ -17,9 +17,9 @@ app.get("/api/v1/tours", (req, res) => {
             tours: tours
         }
     });
-});
+}
 
-app.get("/api/v1/tours/:id", (req, res) => {
+const getTour = (req, res) => {
     const id = +req.params.id;
     const tour = tours.find(tour => tour.id === id);
     if (tour) res.status(200).json({
@@ -33,9 +33,9 @@ app.get("/api/v1/tours/:id", (req, res) => {
             message: "Tour with that ID not found"
         }
     });
-});
+}
 
-app.post("/api/v1/tours", (req, res) => {
+const createTour = (req, res) => {
     const newID = tours[tours.length - 1].id + 1;
     const newTour = {
         id: newID,
@@ -50,21 +50,30 @@ app.post("/api/v1/tours", (req, res) => {
             }
         });
     });
-});
+};
 
-app.patch("/api/v1/tours/:id", (req, res) => {
+const updateTour = (req, res) => {
     res.status(200).json({
         status: "todo",
         message: "Feature hasn't been implemented yet"
     });
-});
+}
 
-app.delete("/api/v1/tours/:id", (req, res) => {
+const deleteTour = (req, res) => {
     res.status(204).json({
         status: "successful",
         data: null
     });
-});
+}
+
+app.route("/api/v1/tours")
+    .get(getAllTours)
+    .post(createTour);
+
+app.route("/api/v1/tours/:id")
+    .get(getTour)
+    .patch(updateTour)
+    .delete(deleteTour);
 
 app.listen(PORT, () => {
     console.log(`Server is running locally on port ${PORT}`);
