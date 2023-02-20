@@ -1,14 +1,20 @@
 const express = require("express");
+const morgan = require("morgan");
 const fs = require("node:fs");
 
+// Constants
 const PORT = 3000;
 const TOURS_FILE_PATH = `${__dirname}/dev-data/data/tours-simple.json`;
 
+// Conf
 const app = express();
-app.use(express.json());
-
 const tours = JSON.parse(fs.readFileSync(TOURS_FILE_PATH).toString());
 
+// Middlewares
+app.use(express.json());
+app.use(morgan("dev"));
+
+// Route handlers
 const getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
@@ -66,6 +72,7 @@ const deleteTour = (req, res) => {
     });
 }
 
+// Routes
 app.route("/api/v1/tours")
     .get(getAllTours)
     .post(createTour);
