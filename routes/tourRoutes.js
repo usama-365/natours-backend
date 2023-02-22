@@ -4,14 +4,15 @@ const {
     createTour,
     getTour,
     updateTour,
-    deleteTour
+    deleteTour,
+    requestBodyNameAndPriceValidator
 } = require("../controllers/tourController");
 
 const router = express.Router();
 
 router.route("/")
     .get(getAllTours)
-    .post(createTour);
+    .post(requestBodyNameAndPriceValidator, createTour);
 
 router.route("/:id")
     .get(getTour)

@@ -3,6 +3,15 @@ const fs = require("node:fs");
 const TOURS_FILE_PATH = `${__dirname}/../dev-data/data/tours-simple.json`;
 const tours = JSON.parse(fs.readFileSync(TOURS_FILE_PATH).toString());
 
+exports.requestBodyNameAndPriceValidator = (req, res, next) => {
+    if (!req.body.price || !req.body.name)
+        return res.status(400).json({
+            status: "fail",
+            message: "Missing name and/or price"
+        });
+    next();
+}
+
 exports.getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
