@@ -4,7 +4,7 @@
   "description": "Natours backend and API created in Node",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",
