@@ -1,6 +1,9 @@
 # Node modules
 node_modules
 
+# Environment variables
+config.env
+
 # Workspace files
 .idea
 *.code-workspace
