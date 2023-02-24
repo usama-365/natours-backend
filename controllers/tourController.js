@@ -1,34 +1,22 @@
-const fs = require("node:fs");
-
-const TOURS_FILE_PATH = `${__dirname}/../dev-data/data/tours-simple.json`;
-const tours = JSON.parse(fs.readFileSync(TOURS_FILE_PATH).toString());
-
-exports.requestBodyNameAndPriceValidator = (req, res, next) => {
-    if (!req.body.price || !req.body.name)
-        return res.status(400).json({
-            status: "fail",
-            message: "Missing name and/or price"
-        });
-    next();
-}
+const Tour = require('../models/tourModel');
 
 exports.getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
-        results: tours.length,
+        // results: tours.length,
         data: {
-            tours: tours
+            // tours: tours
         }
     });
 }
 
 exports.getTour = (req, res) => {
     const id = +req.params.id;
-    const tour = tours.find(tour => tour.id === id);
+    // const tour = tours.find(tour => tour.id === id);
     if (tour) res.status(200).json({
         status: "successful",
         data: {
-            tour: tour
+            // tour: tour
         }
     }); else res.status(404).json({
         status: "fail",
@@ -38,21 +26,21 @@ exports.getTour = (req, res) => {
     });
 }
 
-exports.createTour = (req, res) => {
-    const newID = tours[tours.length - 1].id + 1;
-    const newTour = {
-        id: newID,
-        ...req.body
-    };
-    tours.push(newTour);
-    fs.writeFile(TOURS_FILE_PATH, JSON.stringify(tours), () => {
+exports.createTour = async (req, res) => {
+    try {
+        const newTour = await Tour.create(req.body);
         res.status(201).json({
-            status: "success",
+            status: 'success',
             data: {
                 tour: newTour
             }
         });
-    });
+    } catch (error) {
+        res.status(400).json({
+            status: 'fail',
+            message: error
+        });
+    }
 };
 
 exports.updateTour = (req, res) => {
