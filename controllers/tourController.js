@@ -3,9 +3,14 @@ const Tour = require('../models/tourModel');
 exports.getAllTours = async (req, res) => {
     try {
         // Removing the non-attribute params from the GET query params
-        const queryObj = { ...req.query };
+        let queryObj = { ...req.query };
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
         excludedFields.forEach(el => delete queryObj[el]);
+
+        // Adding the $ in front of gte, lte, gt, lt params of query object
+        let queryString = JSON.stringify(queryObj);
+        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        queryObj = JSON.parse(queryString);
 
         // Building the query
         const query = Tour.find(queryObj);
