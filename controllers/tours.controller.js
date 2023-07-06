@@ -23,12 +23,19 @@ exports.getAllTours = async (req, res) => {
         const selectCriteria = req.query.fields ? req.query.fields.split(',').join(' ') : '-__v';
         query.select(selectCriteria);
 
+        // Pagination
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || 100;
+        const skip = (page - 1) * limit;
+        query.skip(skip).limit(limit);
+
         // Executing the query and sending the response
         const tours = await query;
         res.status(200).json({
             status: "success",
+            results: tours.length,
             data: {
-                tours: tours
+                tours
             }
         });
     } catch (error) {
