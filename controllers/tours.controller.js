@@ -3,7 +3,7 @@ const Tour = require('../models/tours.model');
 exports.getAllTours = async (req, res) => {
     try {
         // Removing the non-attribute params from the GET query params
-        let queryObj = { ...req.query };
+        let queryObj = {...req.query};
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
         excludedFields.forEach(el => delete queryObj[el]);
 
@@ -13,7 +13,15 @@ exports.getAllTours = async (req, res) => {
         queryObj = JSON.parse(queryString);
 
         // Building the query
-        const query = Tour.find(queryObj);
+        let query = Tour.find(queryObj);
+
+        // Custom or default sorting
+        const sortCriteria = req.query.sort ? req.query.sort.split(',').join(' ') : '-createdAt';
+        query.sort(sortCriteria);
+
+        // Projection (Field limiting or custom fields)
+        const selectCriteria = req.query.fields ? req.query.fields.split(',').join(' ') : '-__v';
+        query.select(selectCriteria);
 
         // Executing the query and sending the response
         const tours = await query;
