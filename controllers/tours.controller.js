@@ -1,5 +1,15 @@
 const Tour = require('../models/tours.model');
 
+exports.aliasTopCheapTours = async (req, res, next) => {
+    req.query = {
+        ...req.query,
+        sort: '-ratingAverage,price',
+        limit: '5',
+        fields: 'name,price,ratingAverage,summary,difficulty'
+    }
+    next();
+};
+
 exports.getAllTours = async (req, res) => {
     try {
         // Removing the non-attribute params from the GET query params
