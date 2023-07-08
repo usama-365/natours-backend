@@ -53,14 +53,26 @@ const tourSchema = new mongoose.Schema({
         select: false
     },
     startDates: [Date],
+    secretTour: {
+        type: Boolean,
+        default: false
+    }
 }, {
     toJSON: {virtuals: true},
     toObject: {virtuals: true}
 });
 
+// Document middlewares
 // only runs for save and create method
 tourSchema.pre('save', function (next) {
     this.slug = slugify(this.name, {lower: true});
+    next();
+});
+
+// Query middlewares, run for every hook that starts with find
+// hide secret tours by default
+tourSchema.pre(/^find/, function (next) {
+    this.find({ secretTour: {$ne: true}});
     next();
 });
 
