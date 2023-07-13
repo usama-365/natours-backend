@@ -1,6 +1,12 @@
 require("dotenv").config({path: "./config.env"});
 const mongoose = require("mongoose");
 
+process.on('uncaughtException', err => {
+    console.error(err.name, err.message);
+    console.error('UNHANDLED EXCEPTION. Shutting down!');
+    process.exit(-1);
+});
+
 const app = require("./app");
 
 const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING.replace("<PASSWORD>", process.env.DB_PASSWORD);
@@ -16,11 +22,10 @@ const server = app.listen(EXPRESS_SERVER_PORT, () => {
     console.log(`Server is running locally on port ${EXPRESS_SERVER_PORT}`);
 });
 
-// Handling promise rejections
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
     console.error(err.name, err.message);
     server.close(() => {
-        console.error('UNHANDLED REJECTION. Shutting down');
-        process.exit(1);
-    })
+        console.error('UNHANDLED REJECTION. Shutting down!');
+        process.exit(-1);
+    });
 });
