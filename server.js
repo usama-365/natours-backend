@@ -11,7 +11,6 @@ mongoose.set('strictQuery', true)
     .then(() => console.log("DB connection successful!"))
     .catch(console.error);
 
-
 const EXPRESS_SERVER_PORT = process.env.EXPRESS_PORT || 3000;
 
 app.listen(EXPRESS_SERVER_PORT, () => {
