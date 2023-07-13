@@ -7,7 +7,7 @@ require('dotenv').config({
 });
 const mongoose = require('mongoose');
 const fs = require('node:fs');
-const Tour = require("../../models/tours.model");
+const Tour = require("../../models/tour.model");
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`));
 const DB = process.env.DB_CONNECTION_STRING.replace("<PASSWORD>", process.env.DB_PASSWORD);
