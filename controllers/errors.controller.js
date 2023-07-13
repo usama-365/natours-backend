@@ -1,9 +1,36 @@
+const sendDevelopmentError = (err, res) => {
+    res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+        stack: err.stack,
+        error: err
+    });
+}
+
+const sendProductionError = (err, res) => {
+    // Operational errors are expected/trusted errors, so send detail
+    if (err.isOperational)
+        res.status(err.statusCode).json({
+            status: err.status,
+            message: err.message
+        });
+    // Unknown errors so generic messages
+    else {
+        // Log error detail and send generic message
+        console.error('ERROR 🔥 ', err);
+        res.status(500).json({
+            status: 'error',
+            message: 'Something went very wrong!'
+        });
+    }
+}
+
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
 
-    res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message
-    });
+    if (process.env.NODE_ENV === 'production')
+        sendProductionError(err, res);
+    else if (process.env.NODE_ENV === 'development')
+        sendDevelopmentError(err, res);
 };
