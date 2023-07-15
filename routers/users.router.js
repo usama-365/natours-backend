@@ -7,11 +7,12 @@ const {
     updateUser,
     deleteUser
 } = require("../controllers/users.controller");
-const {signup} = require("../controllers/authentication.controller");
+const { signup, login } = require("../controllers/authentication.controller");
 
 const router = express.Router();
 
-router.post("/signup", signup)
+router.post("/signup", signup);
+router.post("/login", login);
 
 router.route("/")
     .get(getAllUsers)
