@@ -51,6 +51,13 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+userSchema.pre('save', function (next) {
+    // If the password isn't modified or the document is new, don't calculate passwordChangedAt
+    if (!this.isModified('password') || this.isNew) return next();
+    this.passwordChangedAt = Date.now() - 1000; // Lagging 1 second behind so doesn't exceed the jwt iat
+    next();
+});
+
 userSchema.methods.checkPassword = async function (passwordToCheck) {
     return await bcrypt.compare(passwordToCheck, this.password);
 };

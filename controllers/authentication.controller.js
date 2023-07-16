@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const User = require('../models/user.model');
 const handleAsyncError = require('../utils/handleAsyncError.util');
@@ -10,13 +11,12 @@ const signToken = id => jwt.sign({ id }, process.env.JWT_SECRET, {
 });
 
 exports.signup = handleAsyncError(async (req, res, next) => {
-    const { name, email, password, passwordConfirm, passwordChangedAt, role } = req.body;
+    const { name, email, password, passwordConfirm, role } = req.body;
     const user = await User.create({
         name,
         email,
         password,
         passwordConfirm,
-        passwordChangedAt,
         role
     });
 
@@ -24,10 +24,9 @@ exports.signup = handleAsyncError(async (req, res, next) => {
     res.status(201).json({
         status: 'success',
         data: {
-            user,
             token,
         }
-    })
+    });
 });
 
 exports.login = handleAsyncError(async (req, res, next) => {
@@ -114,5 +113,22 @@ exports.forgotPassword = handleAsyncError(async (req, res, next) => {
     });
 });
 
-exports.resetPassword = (req, res, next) => {
-};
+exports.resetPassword = handleAsyncError(async (req, res, next) => {
+    // Get user based on token and expiration date
+    const encryptedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const user = await User.findOne({ passwordResetToken: encryptedToken, passwordResetExpires: { $gt: Date.now() } });
+    // If the token has not expired and the user is valid, update the password
+    if (!user) return next(new AppError(400, 'Password reset token is invalid or has expired.'));
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = user.passwordResetExpires = undefined;
+    await user.save();
+    // Log the user in
+    const token = signToken(user._id);
+    res.status(201).json({
+        status: 'success',
+        data: {
+            token,
+        }
+    });
+});
