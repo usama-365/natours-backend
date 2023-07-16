@@ -132,3 +132,28 @@ exports.resetPassword = handleAsyncError(async (req, res, next) => {
         }
     });
 });
+
+exports.updatePassword = handleAsyncError(async (req, res, next) => {
+    // Validate the POSTed parameters
+    const { currentPassword, password, passwordConfirm } = req.body;
+    if (!currentPassword || !password || !passwordConfirm) return next(new AppError(400, 'Please provide currentPassword, password, passwordConfirm.'));
+
+    // Check the old password
+    const user = await User.findById(req.user._id).select('+password');
+    if (!await user.checkPassword(currentPassword))
+        return next(new AppError(401, 'Invalid old password'));
+
+    // Update the new password
+    user.password = password;
+    user.passwordConfirm = passwordConfirm;
+    await user.save();
+
+    // Login the user with new credentials
+    const token = signToken(user._id);
+    res.status(200).json({
+        status: 'success',
+        data: {
+            token,
+        }
+    });
+});
