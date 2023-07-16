@@ -8,7 +8,7 @@ const {
     aliasTopCheapTours,
     getTourStats, getMonthlyPlan,
 } = require("../controllers/tours.controller");
-const { authenticate } = require("../controllers/authentication.controller");
+const { authenticate, authorizeTo } = require("../controllers/authentication.controller");
 
 const router = express.Router();
 
@@ -28,6 +28,6 @@ router.route("/")
 router.route("/:id")
     .get(getTour)
     .patch(updateTour)
-    .delete(deleteTour);
+    .delete(authenticate, authorizeTo('admin', 'lead-guide'), deleteTour);
 
 module.exports = router;
