@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const handleAsyncError = require('../utils/handleAsyncError.util');
 const AppError = require('../utils/appError.util');
+const sendEmail = require('../utils/email.util');
 
 const signToken = id => jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
@@ -79,4 +80,39 @@ exports.authorizeTo = (...roles) => (req, res, next) => {
     if (!roles.includes(req.user.role))
         return next(new AppError(403, 'You do not have permission to perform this action.'));
     next();
+};
+
+exports.forgotPassword = handleAsyncError(async (req, res, next) => {
+    // Get user based on posted email
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return next(new AppError(404, 'No user with this email address.'));
+
+    // Generate the random reset token
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Create the email message using the reset token
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
+    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forgot your password, please ignore this email`;
+
+    // Send the email
+    try {
+        await sendEmail({ to: user.email, subject: 'Your password reset token (valid for 10 mins)', message });
+    } catch (error) {
+        // Incase of error, invalidate the token and send back error
+        user.passwordResetToken = user.passwordResetExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+        return next(new AppError(500, 'There was an error sending the email. Please try again later.'));
+    }
+
+    // Return success message
+    res.status(200).json({
+        status: 'success',
+        data: {
+            message: 'Password reset token sent to your email address'
+        }
+    });
+});
+
+exports.resetPassword = (req, res, next) => {
 };
