@@ -8,6 +8,7 @@ const {
     aliasTopCheapTours,
     getTourStats, getMonthlyPlan,
 } = require("../controllers/tours.controller");
+const { authenticate } = require("../controllers/authentication.controller");
 
 const router = express.Router();
 
@@ -21,7 +22,7 @@ router.route('/monthly-plan/:year')
     .get(getMonthlyPlan);
 
 router.route("/")
-    .get(getAllTours)
+    .get(authenticate, getAllTours)
     .post(createTour);
 
 router.route("/:id")
