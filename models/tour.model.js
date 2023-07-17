@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -75,23 +74,46 @@ const tourSchema = new mongoose.Schema({
     secretTour: {
         type: Boolean,
         default: false
-    }
+    },
+    startLocation: {
+        // GeoJSON
+        // Not schema type option, but literally an embedded object
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String
+    },
+    locations: [{
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+    }]
 }, {
-    toJSON: {virtuals: true},
-    toObject: {virtuals: true}
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
 // Document middlewares
 // only runs for save and create method
 tourSchema.pre('save', function (next) {
-    this.slug = slugify(this.name, {lower: true});
+    this.slug = slugify(this.name, { lower: true });
     next();
 });
 
 // Query middlewares, run for every hook that starts with find
 // hide secret tours by default
 tourSchema.pre(/^find/, function (next) {
-    this.find({secretTour: {$ne: true}});
+    this.find({ secretTour: { $ne: true } });
     next();
 });
 
@@ -99,7 +121,7 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.pre('aggregate', function (next) {
     // Add the aggregation criteria to exclude secret tour
     // at the beginning of the aggregation pipeline
-    this.pipeline().unshift({$match: {secretTour: {$ne: true}}});
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
     next();
 });
 
