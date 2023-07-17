@@ -100,7 +100,10 @@ const tourSchema = new mongoose.Schema({
         description: String,
         day: Number,
     }],
-    guides: Array,
+    guides: [{
+        type: mongoose.ObjectId,
+        ref: 'User'
+    }],
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -113,11 +116,11 @@ tourSchema.pre('save', function (next) {
     next();
 });
 
-tourSchema.pre('save', async function (next) {
-    const tourGuidesPromises = this.guides.map(async guideID => await User.findById(guideID));
-    this.guides = await Promise.all(tourGuidesPromises);
-    next();
-});
+// tourSchema.pre('save', async function (next) {
+//     const tourGuidesPromises = this.guides.map(async guideID => await User.findById(guideID));
+//     this.guides = await Promise.all(tourGuidesPromises);
+//     next();
+// });
 
 // Query middlewares, run for every hook that starts with find
 // hide secret tours by default
