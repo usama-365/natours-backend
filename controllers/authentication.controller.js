@@ -10,6 +10,27 @@ const signToken = id => jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
 });
 
+const createAndSendJWTToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
+
+    // Add HTTP only cookie
+    res.cookie('jwt', token, {
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    });
+
+    // Remove the password hash and send response
+    user.password = undefined;
+    res.status(statusCode).json({
+        status: 'success',
+        data: {
+            token,
+            user
+        }
+    });
+};
+
 exports.signup = handleAsyncError(async (req, res, next) => {
     const { name, email, password, passwordConfirm, role } = req.body;
     const user = await User.create({
@@ -20,13 +41,7 @@ exports.signup = handleAsyncError(async (req, res, next) => {
         role
     });
 
-    const token = signToken(user._id);
-    res.status(201).json({
-        status: 'success',
-        data: {
-            token,
-        }
-    });
+    return createAndSendJWTToken(user, 201, res);
 });
 
 exports.login = handleAsyncError(async (req, res, next) => {
@@ -44,13 +59,7 @@ exports.login = handleAsyncError(async (req, res, next) => {
     }
 
     // If everything is ok, send token to client
-    const token = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        data: {
-            token
-        }
-    });
+    return createAndSendJWTToken(user, 200, res);
 });
 
 exports.authenticate = handleAsyncError(async (req, res, next) => {
@@ -124,13 +133,7 @@ exports.resetPassword = handleAsyncError(async (req, res, next) => {
     user.passwordResetToken = user.passwordResetExpires = undefined;
     await user.save();
     // Log the user in
-    const token = signToken(user._id);
-    res.status(201).json({
-        status: 'success',
-        data: {
-            token,
-        }
-    });
+    return createAndSendJWTToken(user, 201, res);
 });
 
 exports.updatePassword = handleAsyncError(async (req, res, next) => {
@@ -149,11 +152,5 @@ exports.updatePassword = handleAsyncError(async (req, res, next) => {
     await user.save();
 
     // Login the user with new credentials
-    const token = signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        data: {
-            token,
-        }
-    });
+    return createAndSendJWTToken(user, 200, res);
 });
