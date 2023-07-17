@@ -33,6 +33,14 @@ exports.updateCurrentUser = handleAsyncError(async (req, res, next) => {
     });
 });
 
+exports.deleteCurrentUser = handleAsyncError(async (req, res, next) => {
+    await User.findByIdAndUpdate(req.user._id, { active: false });
+    res.status(200).json({
+        status: 'success',
+        data: null
+    });
+});
+
 exports.getAllUsers = (req, res) => {
     res.status(500).json({
         status: "error",
