@@ -6,7 +6,7 @@ module.exports = class APIResourceQueryManager {
 
     filter() {
         // Removing the non-attribute params from the GET query params
-        let filterObject = {...this.getParams};
+        let filterObject = { ...this.getParams };
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
         excludedFields.forEach(excludedField => delete filterObject[excludedField]);
 
@@ -14,7 +14,6 @@ module.exports = class APIResourceQueryManager {
         let queryString = JSON.stringify(filterObject);
         queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
         filterObject = JSON.parse(queryString);
-
         // Perform the filtration
         this.query.find(filterObject);
         return this;
@@ -28,7 +27,7 @@ module.exports = class APIResourceQueryManager {
         return this;
     }
 
-    limitFields(defaultCriteria='-__v') {
+    limitFields(defaultCriteria = '-__v') {
         const selectCriteria = this.getParams.fields ? this.getParams.fields.split(',').join(' ') : defaultCriteria;
         this.query.select(selectCriteria);
         return this;
