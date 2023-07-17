@@ -79,17 +79,17 @@ exports.deleteTour = handleAsyncError(async (req, res, next) => {
 exports.getTourStats = handleAsyncError(async (req, res) => {
     const stats = await Tour.aggregate([
         {
-            $match: {ratingsAverage: {$gte: 4.5}}
+            $match: { ratingsAverage: { $gte: 4.5 } }
         },
         {
             $group: {
-                _id: {$toUpper: '$difficulty'},
-                numTours: {$sum: 1},
-                numRatings: {$sum: '$ratingsQuantity'},
-                avgRating: {$avg: '$ratingsAverage'},
-                avgPrice: {$avg: '$price'},
-                minPrice: {$min: '$price'},
-                maxPrice: {$max: '$price'},
+                _id: { $toUpper: '$difficulty' },
+                numTours: { $sum: 1 },
+                numRatings: { $sum: '$ratingsQuantity' },
+                avgRating: { $avg: '$ratingsAverage' },
+                avgPrice: { $avg: '$price' },
+                minPrice: { $min: '$price' },
+                maxPrice: { $max: '$price' },
             }
         },
         {
@@ -123,19 +123,19 @@ exports.getMonthlyPlan = handleAsyncError(async (req, res) => {
         },
         {
             $group: {
-                _id: {$month: '$startDates'},
-                numToursStart: {$sum: 1},
-                tours: {$push: '$name'}
+                _id: { $month: '$startDates' },
+                numToursStart: { $sum: 1 },
+                tours: { $push: '$name' }
             }
         },
         {
-            $addFields: {month: '$_id'}
+            $addFields: { month: '$_id' }
         },
         {
-            $project: {_id: 0}
+            $project: { _id: 0 }
         },
         {
-            $sort: {numToursStart: -1}
+            $sort: { numToursStart: -1 }
         }
     ]);
 
