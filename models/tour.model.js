@@ -129,6 +129,12 @@ tourSchema.pre(/^find/, function (next) {
     next();
 });
 
+// Query middleware to populate the tour guides
+tourSchema.pre(/^find/, function (next) {
+    this.populate('guides', '-__v -passwordChangedAt');
+    next();
+});
+
 // Aggregation middleware
 tourSchema.pre('aggregate', function (next) {
     // Add the aggregation criteria to exclude secret tour
