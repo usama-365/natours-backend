@@ -5,13 +5,15 @@ const { createReview, getAllReviews, deleteReview, updateReview, setReviewsTourA
 
 const router = express.Router({ mergeParams: true });
 
+// Authenticated routes
+router.use(authenticate);
 router.route('/')
-    .post(authenticate, authorizeTo('user'), setReviewsTourAndUserIds, createReview)
-    .get(getAllReviews);
+    .get(getAllReviews)
+    .post(authorizeTo('user'), setReviewsTourAndUserIds, createReview);
 
 router.route('/:id')
     .get(getReview)
-    .delete(deleteReview)
-    .patch(updateReview);
+    .delete(authorizeTo('user', 'admin'), deleteReview)
+    .patch(authorizeTo('user', 'admin'), updateReview);
 
 module.exports = router;

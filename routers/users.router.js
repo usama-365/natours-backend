@@ -1,36 +1,28 @@
 const express = require("express");
 
-const {
-    getAllUsers,
-    createUser,
-    getUser,
-    updateUser,
-    deleteUser,
-    updateCurrentUser,
-    deleteCurrentUser,
-    getMe
-} = require("../controllers/users.controller");
-const { signup, login, forgotPassword, resetPassword, updatePassword, authenticate } = require("../controllers/authentication.controller");
+const { getAllUsers, createUser, getUser, updateUser, deleteUser, updateCurrentUser, deleteCurrentUser, getMe } = require("../controllers/users.controller");
+const { signup, login, forgotPassword, resetPassword, updatePassword, authenticate, authorizeTo } = require("../controllers/authentication.controller");
 
 const router = express.Router();
 
-router.get("/me", authenticate, getMe, getUser);
-
+// Routes for unauthenticated users
 router.post("/signup", signup);
 router.post("/login", login);
-
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 
-router.patch("/updatePassword", authenticate, updatePassword);
+// Routes for authenticated routes
+router.use(authenticate);
+router.get("/me", getMe, getUser);
+router.patch("/updateMyPassword", updatePassword);
+router.patch('/updateMe', updateCurrentUser);
+router.delete("/deleteMe", deleteCurrentUser);
 
-router.patch('/updateCurrentUser', authenticate, updateCurrentUser);
-router.delete("/deleteCurrentUser", authenticate, deleteCurrentUser);
-
+// REST endpoints for admin
+router.use(authorizeTo('admin'));
 router.route("/")
     .get(getAllUsers)
     .post(createUser);
-
 router.route("/:id")
     .get(getUser)
     .patch(updateUser)
