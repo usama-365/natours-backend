@@ -8,7 +8,6 @@ const hpp = require('hpp');
 
 const tourRouter = require("./routers/tours.router");
 const userRouter = require("./routers/users.router");
-const reviewsRouter = require("./routers/reviews.router");
 const AppError = require('./utils/appError.util');
 const globalErrorHandler = require('./controllers/errors.controller');
 
@@ -44,7 +43,6 @@ app.use(express.static(`${__dirname}/public`));
 // Mounting routers
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/reviews", reviewsRouter);
 
 // Invalid route
 app.all('*', (req, res, next) => {

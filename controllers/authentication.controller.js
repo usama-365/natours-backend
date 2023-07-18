@@ -86,7 +86,7 @@ exports.authenticate = handleAsyncError(async (req, res, next) => {
 
 exports.authorizeTo = (...roles) => (req, res, next) => {
     if (!roles.includes(req.user.role))
-        return next(new AppError(403, 'You do not have permission to perform this action.'));
+        return next(new AppError(403, `This operation is only permitted to ${roles.join(', ')}.`));
     next();
 };
 

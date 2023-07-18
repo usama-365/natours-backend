@@ -9,6 +9,7 @@ const {
     getTourStats, getMonthlyPlan,
 } = require("../controllers/tours.controller");
 const { authenticate, authorizeTo } = require("../controllers/authentication.controller");
+const { createReview } = require("../controllers/reviews.controller");
 
 const router = express.Router();
 
@@ -29,5 +30,9 @@ router.route("/:id")
     .get(getTour)
     .patch(updateTour)
     .delete(authenticate, authorizeTo('admin', 'lead-guide'), deleteTour);
+
+// Review related nested routes
+router.route("/:tourId/reviews")
+    .post(authenticate, authorizeTo('user'), createReview);
 
 module.exports = router;

@@ -22,7 +22,12 @@ exports.getAllReviews = handleAsyncError(async (req, res, next) => {
 });
 
 exports.createReview = handleAsyncError(async (req, res, next) => {
-    const review = await Review.create({ ...req.body });
+    const reviewAttributes = {
+        ...req.body,
+        user: req.user._id,
+        tour: req.params.tourId
+    };
+    const review = await Review.create(reviewAttributes);
     res.status(201).json({
         status: 'success',
         data: {
