@@ -14,6 +14,11 @@ const filterRequestBody = (requestBody, ...keysToFilter) => {
     return filteredBody;
 };
 
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user._id;
+    next();
+}
+
 exports.updateCurrentUser = handleAsyncError(async (req, res, next) => {
     // Password change shouldn't be allowed
     if (req.body.password || req.body.passwordConfirm)

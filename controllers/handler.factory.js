@@ -7,7 +7,7 @@ exports.deleteOne = Model => handleAsyncError(async (req, res, next) => {
     if (!doc) return next(new AppError(404, 'No document found with that ID'));
 
     res.status(204).json({
-        status: "successful",
+        status: "success",
         data: null
     });
 });
@@ -20,7 +20,7 @@ exports.updateOne = Model => handleAsyncError(async (req, res, next) => {
     if (!updatedDoc) return next(new AppError(404, 'No document found with that ID'));
 
     res.status(200).json({
-        status: "successful",
+        status: "success",
         data: {
             document: updatedDoc
         }
@@ -45,7 +45,7 @@ exports.getOne = (Model, populateOptions) => handleAsyncError(async (req, res, n
     if (!document) return next(new AppError(404, 'No document found with that ID'));
 
     res.status(200).json({
-        status: "successful",
+        status: "success",
         data: {
             document
         }
