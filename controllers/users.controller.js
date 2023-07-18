@@ -43,19 +43,12 @@ exports.deleteCurrentUser = handleAsyncError(async (req, res, next) => {
     });
 });
 
-exports.getAllUsers = handleAsyncError(async (req, res) => {
-    const users = await User.find();
-    res.status(200).json({
-        status: "success",
-        data: {
-            users
-        }
-    });
-})
 
 exports.createUser = (req, res, next) => {
     next(new AppError(400, 'Please use signup.'));
 };
+
+exports.getAllUsers = handlerFactory.getAll(User);
 
 exports.getUser = handlerFactory.getOne(User);
 

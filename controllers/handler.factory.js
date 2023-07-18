@@ -1,3 +1,4 @@
+const APIResourceQueryManager = require("../utils/apiResourceQueryManager.util");
 const AppError = require("../utils/appError.util");
 const handleAsyncError = require("../utils/handleAsyncError.util");
 
@@ -47,6 +48,27 @@ exports.getOne = (Model, populateOptions) => handleAsyncError(async (req, res, n
         status: "successful",
         data: {
             document
+        }
+    });
+});
+
+exports.getAll = (Model) => handleAsyncError(async (req, res) => {
+    // Not the most correct implementation
+    // Workaround for tour's nested review route
+    const filter = {};
+    if (req.params.tourId) filter.tour = req.params.tourId;
+
+    // Perform the API features on this model according to the query
+    const modelFeatures = new APIResourceQueryManager(Model.find(filter), req.query);
+    modelFeatures.filter().paginate().sort().limitFields();
+
+    // Executing the query and sending the response
+    const documents = await modelFeatures.query;
+    res.status(200).json({
+        status: "success",
+        data: {
+            results: documents.length,
+            documents
         }
     });
 });

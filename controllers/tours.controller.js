@@ -1,5 +1,4 @@
 const Tour = require('../models/tour.model');
-const APIResourceQueryManager = require('../utils/apiResourceQueryManager.util');
 const handleAsyncError = require('../utils/handleAsyncError.util')
 const handlerFactory = require('./handler.factory');
 
@@ -13,21 +12,7 @@ exports.aliasTopCheapTours = async (req, res, next) => {
     next();
 };
 
-exports.getAllTours = handleAsyncError(async (req, res) => {
-    // Perform the API features on this model according to the query
-    const toursFeatures = new APIResourceQueryManager(Tour, req.query);
-    toursFeatures.filter().paginate().sort().limitFields();
-
-    // Executing the query and sending the response
-    const tours = await toursFeatures.query;
-    res.status(200).json({
-        status: "success",
-        results: tours.length,
-        data: {
-            tours
-        }
-    });
-});
+exports.getAllTours = handlerFactory.getAll(Tour);
 
 exports.getTour = handlerFactory.getOne(Tour, 'reviews');
 
