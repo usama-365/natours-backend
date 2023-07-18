@@ -1,6 +1,8 @@
 const User = require("../models/user.model");
+
 const AppError = require("../utils/appError.util");
 const handleAsyncError = require("../utils/handleAsyncError.util");
+const handlerFactory = require("./handler.factory");
 
 const filterRequestBody = (requestBody, ...keysToFilter) => {
     // Create a new object, that only contains keys that are to be filtered
@@ -72,9 +74,4 @@ exports.updateUser = (req, res) => {
     });
 }
 
-exports.deleteUser = (req, res) => {
-    res.status(500).json({
-        status: "error",
-        message: "This route is not yet defined!"
-    });
-}
+exports.deleteUser = handlerFactory.deleteOne(User);
