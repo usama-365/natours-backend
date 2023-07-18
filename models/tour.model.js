@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
-const User = require('../models/user.model');
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -101,7 +100,7 @@ const tourSchema = new mongoose.Schema({
         day: Number,
     }],
     guides: [{
-        type: mongoose.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: 'User'
     }],
 }, {
