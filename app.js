@@ -8,6 +8,7 @@ const hpp = require('hpp');
 
 const tourRouter = require("./routers/tours.router");
 const userRouter = require("./routers/users.router");
+const reviewRouter = require("./routers/reviews.router");
 const AppError = require('./utils/appError.util');
 const globalErrorHandler = require('./controllers/errors.controller');
 
@@ -41,6 +42,7 @@ app.use(hpp({
 app.use(express.static(`${__dirname}/public`));
 
 // Mounting routers
+app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
