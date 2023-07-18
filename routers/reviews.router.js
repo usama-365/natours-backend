@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { authenticate, authorizeTo } = require('../controllers/authentication.controller');
-const { createReview, getAllReviews, deleteReview } = require('../controllers/reviews.controller');
+const { createReview, getAllReviews, deleteReview, updateReview } = require('../controllers/reviews.controller');
 
 const router = express.Router({ mergeParams: true });
 
@@ -10,6 +10,7 @@ router.route('/')
     .get(getAllReviews);
 
 router.route('/:id')
-    .delete(deleteReview);
+    .delete(deleteReview)
+    .patch(updateReview);
 
 module.exports = router;

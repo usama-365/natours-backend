@@ -52,20 +52,7 @@ exports.createTour = handleAsyncError(async (req, res) => {
     });
 });
 
-exports.updateTour = handleAsyncError(async (req, res, next) => {
-    const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
-    if (!updatedTour) return next(new AppError(404, 'No tour found with that ID'));
-
-    res.status(200).json({
-        status: "successful",
-        data: {
-            tour: updatedTour
-        }
-    });
-});
+exports.updateTour = handlerFactory.updateOne(Tour);
 
 exports.deleteTour = handlerFactory.deleteOne(Tour);
 
