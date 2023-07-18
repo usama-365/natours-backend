@@ -16,18 +16,13 @@ exports.getAllReviews = handleAsyncError(async (req, res, next) => {
     });
 });
 
-exports.createReview = handleAsyncError(async (req, res, next) => {
+exports.setReviewsTourAndUserIds = function (req, res, next) {
     if (!req.body.user) req.body.user = req.user._id;
     if (!req.body.tour) req.body.tour = req.params.tourId;
+    next();
+}
 
-    const review = await Review.create(req.body);
-    res.status(201).json({
-        status: 'success',
-        data: {
-            review
-        }
-    });
-});
+exports.createReview = handlerFactory.createOne(Review);
 
 exports.deleteReview = handlerFactory.deleteOne(Review);
 

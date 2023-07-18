@@ -25,3 +25,13 @@ exports.updateOne = Model => handleAsyncError(async (req, res, next) => {
         }
     });
 });
+
+exports.createOne = Model => handleAsyncError(async (req, res) => {
+    const doc = await Model.create(req.body);
+    res.status(201).json({
+        status: 'success',
+        data: {
+            document: doc
+        }
+    });
+});
