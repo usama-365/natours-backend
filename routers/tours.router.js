@@ -9,9 +9,12 @@ const {
     getTourStats, getMonthlyPlan,
 } = require("../controllers/tours.controller");
 const { authenticate, authorizeTo } = require("../controllers/authentication.controller");
-const { createReview } = require("../controllers/reviews.controller");
+const reviewsRouter = require('./reviews.router');
 
 const router = express.Router();
+
+// Mounting review router
+router.use('/:tourId/reviews', reviewsRouter);
 
 router.route('/top-5-cheap')
     .get(aliasTopCheapTours, getAllTours);
@@ -30,9 +33,5 @@ router.route("/:id")
     .get(getTour)
     .patch(updateTour)
     .delete(authenticate, authorizeTo('admin', 'lead-guide'), deleteTour);
-
-// Review related nested routes
-router.route("/:tourId/reviews")
-    .post(authenticate, authorizeTo('user'), createReview);
 
 module.exports = router;
