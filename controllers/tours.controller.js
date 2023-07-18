@@ -1,7 +1,6 @@
 const Tour = require('../models/tour.model');
 const APIResourceQueryManager = require('../utils/apiResourceQueryManager.util');
 const handleAsyncError = require('../utils/handleAsyncError.util')
-const AppError = require('../utils/appError.util');
 const handlerFactory = require('./handler.factory');
 
 exports.aliasTopCheapTours = async (req, res, next) => {
@@ -30,17 +29,7 @@ exports.getAllTours = handleAsyncError(async (req, res) => {
     });
 });
 
-exports.getTour = handleAsyncError(async (req, res, next) => {
-    const tour = await Tour.findById(req.params.id).populate('reviews');
-    if (!tour) return next(new AppError(404, 'No tour found with that ID'));
-
-    res.status(200).json({
-        status: "successful",
-        data: {
-            tour: tour
-        }
-    });
-});
+exports.getTour = handlerFactory.getOne(Tour, 'reviews');
 
 exports.createTour = handlerFactory.createOne(Tour);
 

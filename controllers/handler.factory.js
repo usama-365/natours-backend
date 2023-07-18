@@ -35,3 +35,18 @@ exports.createOne = Model => handleAsyncError(async (req, res) => {
         }
     });
 });
+
+exports.getOne = (Model, populateOptions) => handleAsyncError(async (req, res, next) => {
+    const query = Model.findById(req.params.id);
+    if (populateOptions) query.populate(populateOptions);
+    const document = await query;
+
+    if (!document) return next(new AppError(404, 'No document found with that ID'));
+
+    res.status(200).json({
+        status: "successful",
+        data: {
+            document
+        }
+    });
+});

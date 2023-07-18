@@ -53,14 +53,11 @@ exports.getAllUsers = handleAsyncError(async (req, res) => {
     });
 })
 
-exports.getUser = (req, res) => {
-    res.status(500).json({
-        status: "error",
-        message: "This route is not yet defined!"
-    });
-}
+exports.createUser = (req, res, next) => {
+    next(new AppError(400, 'Please use signup.'));
+};
 
-exports.createUser = handlerFactory.createOne(User);
+exports.getUser = handlerFactory.getOne(User);
 
 // ALERT: Do not update password using this, it won't be encrypted
 exports.updateUser = handlerFactory.updateOne(User);

@@ -22,6 +22,8 @@ exports.setReviewsTourAndUserIds = function (req, res, next) {
     next();
 }
 
+exports.getReview = handlerFactory.getOne(Review);
+
 exports.createReview = handlerFactory.createOne(Review);
 
 exports.deleteReview = handlerFactory.deleteOne(Review);
