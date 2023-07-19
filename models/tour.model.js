@@ -140,12 +140,12 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 // Aggregation middleware
-tourSchema.pre('aggregate', function (next) {
-    // Add the aggregation criteria to exclude secret tour
-    // at the beginning of the aggregation pipeline
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-    next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//     // Add the aggregation criteria to exclude secret tour
+//     // at the beginning of the aggregation pipeline
+//     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//     next();
+// });
 
 tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7;

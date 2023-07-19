@@ -100,7 +100,6 @@ exports.getToursWithin = handleAsyncError(async (req, res, next) => {
     const { distance, latlng, unit } = req.params;
     const [lat, lng] = latlng.split(',');
     if (!lat || !lng) return next(new AppError(400, 'Please provide latitude and longitude in lat,lng format'));
-    console.log(lat, lng, distance, unit);
 
     // To calculate radius in radians, we have to divide the distance with the radius of earth
     const radiusInRadians = distance / (unit === 'mi' ? 3963.2 : 6378.1);
@@ -112,4 +111,40 @@ exports.getToursWithin = handleAsyncError(async (req, res, next) => {
             tours
         }
     });
+});
+
+exports.getDistances = handleAsyncError(async (req, res, next) => {
+    const { latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+    if (!lat || !lng) return next(new AppError(400, 'Please provide latitude and longitude in lat,lng format'));
+
+    // Calculating the value to multiply with the distance in meters depending upon unit
+    const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+    const distances = await Tour.aggregate([
+        {
+            $geoNear: {
+                near: {
+                    type: 'Point',
+                    coordinates: [+lng, +lat]
+                },
+                distanceField: 'distance',
+                // Converting from meters to kilometers
+                distanceMultiplier: multiplier
+            }
+        },
+        {
+            $project: {
+                distance: 1,
+                name: 1,
+            }
+        }
+    ]);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            results: distances.length,
+            distances
+        }
+    })
 });

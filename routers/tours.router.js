@@ -6,7 +6,7 @@ const {
     updateTour,
     deleteTour,
     aliasTopCheapTours,
-    getTourStats, getMonthlyPlan, getToursWithin,
+    getTourStats, getMonthlyPlan, getToursWithin, getDistances,
 } = require("../controllers/tours.controller");
 const { authenticate, authorizeTo } = require("../controllers/authentication.controller");
 const reviewsRouter = require('./reviews.router');
@@ -16,8 +16,12 @@ const router = express.Router();
 // Mounting review router
 router.use('/:tourId/reviews', reviewsRouter);
 
+// Geo-spatial routes
 router.route("/tours-within/:distance/center/:latlng/unit/:unit")
     .get(getToursWithin);
+
+router.route("/distances/:latlng/unit/:unit")
+    .get(getDistances);
 
 router.route('/top-5-cheap')
     .get(aliasTopCheapTours, getAllTours);
