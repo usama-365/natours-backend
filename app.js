@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const path = require('path');
 
 const tourRouter = require("./routers/tours.router");
 const userRouter = require("./routers/users.router");
@@ -14,7 +15,12 @@ const globalErrorHandler = require('./controllers/errors.controller');
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // Global middleware
+// Static file serving
+app.use(express.static(path.join(__dirname, 'public')));
 // Setting HTTP response headers
 app.use(helmet());
 // Dev logging
@@ -38,10 +44,15 @@ app.use(xss());
 app.use(hpp({
     whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'maxGroupSize', 'difficulty', 'price']
 }));
-// Static file serving
-app.use(express.static(`${__dirname}/public`));
+
 
 // Mounting routers
+app.get("/", (req, res, next) => {
+    res.status(200).render('base', {
+        tour: 'The Forest Hiker',
+        user: 'Jonas'
+    });
+});
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
