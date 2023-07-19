@@ -1,4 +1,5 @@
 const Tour = require('../models/tour.model');
+const AppError = require('../utils/appError.util');
 const handleAsyncError = require('../utils/handleAsyncError.util')
 const handlerFactory = require('./handler.factory');
 
@@ -89,6 +90,26 @@ exports.getMonthlyPlan = handleAsyncError(async (req, res) => {
         status: "success",
         message: {
             plan
+        }
+    });
+});
+
+// GET /tours-within/:distance/center/:latlng/unit/:unit
+// GET /tours-within/300/center/-40,45/unit/mi
+exports.getToursWithin = handleAsyncError(async (req, res, next) => {
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+    if (!lat || !lng) return next(new AppError(400, 'Please provide latitude and longitude in lat,lng format'));
+    console.log(lat, lng, distance, unit);
+
+    // To calculate radius in radians, we have to divide the distance with the radius of earth
+    const radiusInRadians = distance / (unit === 'mi' ? 3963.2 : 6378.1);
+    const tours = await Tour.find({ startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radiusInRadians] } } });
+    res.status(200).json({
+        status: 'success',
+        data: {
+            results: tours.length,
+            tours
         }
     });
 });

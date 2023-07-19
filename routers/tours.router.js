@@ -6,7 +6,7 @@ const {
     updateTour,
     deleteTour,
     aliasTopCheapTours,
-    getTourStats, getMonthlyPlan,
+    getTourStats, getMonthlyPlan, getToursWithin,
 } = require("../controllers/tours.controller");
 const { authenticate, authorizeTo } = require("../controllers/authentication.controller");
 const reviewsRouter = require('./reviews.router');
@@ -15,6 +15,9 @@ const router = express.Router();
 
 // Mounting review router
 router.use('/:tourId/reviews', reviewsRouter);
+
+router.route("/tours-within/:distance/center/:latlng/unit/:unit")
+    .get(getToursWithin);
 
 router.route('/top-5-cheap')
     .get(aliasTopCheapTours, getAllTours);
