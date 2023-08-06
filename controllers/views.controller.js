@@ -20,3 +20,9 @@ exports.getTourPage = handleAsyncError(async (req, res) => {
 		tour,
 	});
 });
+
+exports.getLoginPage = (req, res) => {
+	res.status(200).render("login", {
+		title: "Login to your account",
+	});
+};
