@@ -4,7 +4,7 @@ import {
 } from "./login";
 import { displayMap } from "./map";
 
-const formEl = document.querySelector(".form");
+const formEl = document.querySelector(".form.form--login");
 const logoutBtnEl = document.querySelector(".nav__el--logout");
 
 if (logoutBtnEl) {

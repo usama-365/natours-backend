@@ -4,6 +4,7 @@ const {
 	getTourPage,
 	getLoginPage,
 	getAccountPage,
+	updateUserData,
 } = require("../controllers/views.controller");
 const {
 	isLoggedIn,
@@ -13,6 +14,7 @@ const {
 const router = express.Router();
 
 router.get("/me", authenticate, getAccountPage);
+router.post("/submit-user-data", authenticate, updateUserData);
 
 router.use(isLoggedIn);
 router.get("/", getOverviewPage);

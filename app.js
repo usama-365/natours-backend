@@ -45,6 +45,11 @@ app.use("/api", limiter);
 app.use(express.json({
 	limit: "10kb",
 }));
+// URL parsing
+app.use(express.urlencoded({
+	extended: true,
+	limit: "10kb",
+}));
 // Cookie parsing
 app.use(cookieParser());
 // Data sanitization against noSQL query injection

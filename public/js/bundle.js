@@ -277,7 +277,7 @@ exports.displayMap = displayMap;
 
 var _login = require("./login");
 var _map = require("./map");
-var formEl = document.querySelector(".form");
+var formEl = document.querySelector(".form.form--login");
 var logoutBtnEl = document.querySelector(".nav__el--logout");
 if (logoutBtnEl) {
   logoutBtnEl.addEventListener("click", _login.logout);
@@ -320,7 +320,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49345" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50770" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
