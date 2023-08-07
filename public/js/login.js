@@ -15,9 +15,14 @@ const login = async function (email, password) {
 			}),
 		});
 		const data = await result.json();
-		console.log(data);
+		if (data.status === "success") {
+			alert("Logged in successfully");
+			setTimeout(() => {
+				location.assign("/");
+			}, 1500);
+		}
 	} catch (e) {
-		console.error(e);
+		alert(e.message);
 	}
 };
 
