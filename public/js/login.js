@@ -1,8 +1,6 @@
-const formEl = document.querySelector(".form");
-const emailInputEl = formEl.querySelector("#email");
-const passwordInputEl = formEl.querySelector("#password");
+import { showAlert } from "./alert";
 
-const login = async function (email, password) {
+export const login = async function (email, password) {
 	try {
 		const result = await fetch("http://127.0.0.1:3000/api/v1/users/login", {
 			method: "POST",
@@ -16,19 +14,15 @@ const login = async function (email, password) {
 		});
 		const data = await result.json();
 		if (data.status === "success") {
-			alert("Logged in successfully");
+			showAlert("success", "Logged in successfully");
 			setTimeout(() => {
 				location.assign("/");
 			}, 1500);
+		} else {
+			throw new Error(data.message);
 		}
 	} catch (e) {
-		alert(e.message);
+		showAlert("error", e.message);
 	}
 };
 
-document.querySelector(".form").addEventListener("submit", function (e) {
-	e.preventDefault();
-	const email = emailInputEl.value;
-	const password = passwordInputEl.value;
-	login(email, password);
-});
