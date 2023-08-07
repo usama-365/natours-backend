@@ -1,7 +1,15 @@
-import { login } from "./login";
+import {
+	login,
+	logout,
+} from "./login";
 import { displayMap } from "./map";
 
 const formEl = document.querySelector(".form");
+const logoutBtnEl = document.querySelector(".nav__el--logout");
+
+if (logoutBtnEl) {
+	logoutBtnEl.addEventListener("click", logout);
+}
 
 if (formEl) {
 	const emailInputEl = formEl.querySelector("#email");

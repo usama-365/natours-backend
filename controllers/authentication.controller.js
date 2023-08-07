@@ -105,26 +105,32 @@ exports.authenticate = handleAsyncError(async (req, res, next) => {
 });
 
 // Only for rendered pages
-exports.isLoggedIn = handleAsyncError(async (req, res, next) => {
-	// Extracting jwt token
-	if (req.cookies.jwt) {
-		const {
-			id,
-			iat,
-		} = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
+exports.isLoggedIn = async (req, res, next) => {
+	try {
+		// Extracting jwt token
+		if (req.cookies.jwt) {
+			const {
+				id,
+				iat,
+			} = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
 
-		// Checking if the user pointed by the token still exists
-		const user = await User.findById(id);
-		if (!user) return next();
+			// Checking if the user pointed by the token still exists
+			const user = await User.findById(id);
+			if (!user) return next();
 
-		// Checking that the password wasn't changed after the token was issued
-		if (await user.passwordWasChangedAfter(iat)) return next();
+			// Checking that the password wasn't changed after the token was
+			// issued
+			if (await user.passwordWasChangedAfter(iat)) return next();
 
-		// Everything checks out so adding user to request and forwarding
-		res.locals.user = user;
+			// Everything checks out so adding user to request and forwarding
+			res.locals.user = user;
+		}
+		next();
+	} catch (e) {
+		next();
 	}
-	next();
-});
+
+};
 
 exports.authorizeTo = (...roles) => (req, res, next) => {
 	if (!roles.includes(req.user.role)) {
@@ -211,3 +217,11 @@ exports.updatePassword = handleAsyncError(async (req, res, next) => {
 	// Login the user with new credentials
 	return createAndSendJWTToken(user, 200, res);
 });
+
+exports.logout = (req, res) => {
+	res.cookie("jwt", "loggedout", {
+		expires: new Date(Date.now() + 10 * 1000),
+		httpOnly: true,
+	});
+	res.status(200).json({ status: "success" });
+};

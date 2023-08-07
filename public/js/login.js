@@ -26,3 +26,16 @@ export const login = async function (email, password) {
 	}
 };
 
+export const logout = async () => {
+	try {
+		const result = await fetch("http://127.0.0.1:3000/api/v1/users/logout");
+		const data = await result.json();
+		if (data.status === "success") {
+			location.reload(true);
+		} else {
+			throw new Error("");
+		}
+	} catch (e) {
+		showAlert("error", "Error logging out. Please try again");
+	}
+};
