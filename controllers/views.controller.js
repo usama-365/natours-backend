@@ -31,3 +31,10 @@ exports.getLoginPage = (req, res) => {
 		title: "Login to your account",
 	});
 };
+
+exports.getAccountPage = (req, res) => {
+	res.status(200).render("account", {
+		title: "Your Account",
+	});
+};
+

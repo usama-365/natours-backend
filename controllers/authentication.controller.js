@@ -101,6 +101,7 @@ exports.authenticate = handleAsyncError(async (req, res, next) => {
 
 	// Everything checks out so adding user to request and forwarding
 	req.user = user;
+	res.locals.user = user;
 	next();
 });
 
