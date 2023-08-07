@@ -3,9 +3,20 @@ import {
 	logout,
 } from "./login";
 import { displayMap } from "./map";
+import { updateData } from "./updateSettings";
 
 const formEl = document.querySelector(".form.form--login");
 const logoutBtnEl = document.querySelector(".nav__el--logout");
+const userDataFormEl = document.querySelector(".form-user-data");
+
+if (userDataFormEl) {
+	userDataFormEl.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const email = document.getElementById("email").value;
+		const name = document.getElementById("name").value;
+		updateData(name, email);
+	});
+}
 
 if (logoutBtnEl) {
 	logoutBtnEl.addEventListener("click", logout);
