@@ -1,8 +1,35 @@
-const User = require("../models/user.model");
+const multer = require("multer");
+const path = require("path");
 
+const User = require("../models/user.model");
 const AppError = require("../utils/appError.util");
 const handleAsyncError = require("../utils/handleAsyncError.util");
 const handlerFactory = require("./handler.factory");
+
+const multerStorage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, path.join(__dirname, "..", "public", "img", "users"));
+	},
+	filename: (req, file, cb) => {
+		const extension = file.mimetype.split("/")[1];
+		cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
+	},
+});
+
+const multerFilter = (req, file, cb) => {
+	if (file.mimetype.startsWith("image")) {
+		cb(null, true);
+	} else {
+		cb(new AppError("Not an image! Please upload only images", 400), false);
+	}
+};
+
+const upload = multer({
+	storage: multerStorage,
+	fileFilter: multerFilter,
+});
+
+exports.parsePhoto = upload.single("photo");
 
 const filterRequestBody = (requestBody, ...keysToFilter) => {
 	// Create a new object, that only contains keys that are to be filtered
@@ -28,6 +55,10 @@ exports.updateCurrentUser = handleAsyncError(async (req, res, next) => {
 
 	// Only allow non-sensitive fields update
 	const filteredBody = filterRequestBody(req.body, "name", "email");
+
+	// Also extract photo
+	if (req.file) filteredBody.photo = req.file.filename;
+	
 	const user = await User.findByIdAndUpdate(req.user._id, filteredBody, {
 		runValidators: true,
 		new: true,

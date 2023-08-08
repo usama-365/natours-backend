@@ -9,6 +9,7 @@ const {
 	updateCurrentUser,
 	deleteCurrentUser,
 	getMe,
+	parsePhoto,
 } = require("../controllers/users.controller");
 const {
 	signup,
@@ -34,7 +35,7 @@ router.patch("/resetPassword/:token", resetPassword);
 router.use(authenticate);
 router.get("/me", getMe, getUser);
 router.patch("/updateMyPassword", updatePassword);
-router.patch("/updateMe", updateCurrentUser);
+router.patch("/updateMe", parsePhoto, updateCurrentUser);
 router.delete("/deleteMe", deleteCurrentUser);
 
 // REST endpoints for admin
