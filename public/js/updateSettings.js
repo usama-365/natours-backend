@@ -1,16 +1,10 @@
 import { showAlert } from "./alert";
 
-export const updateData = async (name, email) => {
+export const updateData = async (form) => {
 	try {
 		const result = await fetch("http://127.0.0.1:3000/api/v1/users/updateMe", {
 			method: "PATCH",
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-			},
-			body: JSON.stringify({
-				name,
-				email,
-			}),
+			body: form,
 		});
 		const data = await result.json();
 		if (data.status === "success") {
@@ -19,6 +13,7 @@ export const updateData = async (name, email) => {
 			throw new Error(data);
 		}
 	} catch (err) {
+		console.log(err);
 		showAlert("error", err.message);
 	}
 };
