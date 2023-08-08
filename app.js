@@ -7,6 +7,7 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
 
 const tourRouter = require("./routers/tours.router");
 const bookingsRouter = require("./routers/bookings.router");
@@ -68,6 +69,8 @@ app.use(hpp({
 		"price",
 	],
 }));
+// Compression middleware to compress responses
+app.use(compression());
 
 // Mounting routers
 app.use("/", viewsRouter);

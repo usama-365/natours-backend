@@ -2,7 +2,7 @@ import { showAlert } from "./alert";
 
 export const login = async function (email, password) {
 	try {
-		const result = await fetch("http://127.0.0.1:3000/api/v1/users/login", {
+		const result = await fetch("/api/v1/users/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -28,7 +28,7 @@ export const login = async function (email, password) {
 
 export const logout = async () => {
 	try {
-		const result = await fetch("http://127.0.0.1:3000/api/v1/users/logout");
+		const result = await fetch("/api/v1/users/logout");
 		const data = await result.json();
 		if (data.status === "success") {
 			location.reload(true);
