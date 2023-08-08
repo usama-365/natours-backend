@@ -32,10 +32,5 @@ exports.getCheckoutSession = handleAsyncError(async (req, res, next) => {
 		payment_method_types: [ "card" ],
 	});
 	// 3) Create session as response
-	res.status(200).json({
-		status: "success",
-		data: {
-			session,
-		},
-	});
+	res.redirect(303, session.url);
 });
