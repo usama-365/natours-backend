@@ -9,6 +9,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 
 const tourRouter = require("./routers/tours.router");
+const bookingsRouter = require("./routers/bookings.router");
 const userRouter = require("./routers/users.router");
 const reviewRouter = require("./routers/reviews.router");
 const viewsRouter = require("./routers/views.router");
@@ -70,6 +71,7 @@ app.use(hpp({
 
 // Mounting routers
 app.use("/", viewsRouter);
+app.use("/api/v1/bookings", bookingsRouter);
 app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
