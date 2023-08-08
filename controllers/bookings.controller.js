@@ -3,6 +3,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const handleAsyncError = require("../utils/handleAsyncError.util");
 const Tour = require("../models/tour.model");
 const Booking = require("../models/booking.model");
+const handlerFactory = require("./handler.factory");
 
 exports.getCheckoutSession = handleAsyncError(async (req, res, next) => {
 	// 1) Get the currently booked tour
@@ -51,3 +52,13 @@ exports.createBookingCheckout = handleAsyncError(async (req, res, next) => {
 	// To remove the query string
 	res.redirect(req.originalUrl.split("?")[0]);
 });
+
+exports.createBooking = handlerFactory.createOne(Booking);
+
+exports.getBooking = handlerFactory.getOne(Booking);
+
+exports.getAllBookings = handlerFactory.getAll(Booking);
+
+exports.updateBooking = handlerFactory.updateOne(Booking);
+
+exports.deleteBooking = handlerFactory.deleteOne(Booking);
