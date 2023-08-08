@@ -4,9 +4,9 @@
   "description": "Natours backend and API created in Node",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "watch": "nodemon server.js",
-    "debug": "ndb server.js",
+    "start": "node api/index.js",
+    "watch": "nodemon api/index.js",
+    "debug": "ndb api/index.js",
     "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js/ --out-file bundle.js",
     "build:js": "parcel build ./public/js/index.js --out-dir ./public/js/ --out-file bundle.js"
   },
