@@ -35,16 +35,16 @@ const upload = multer({
 
 exports.parsePhoto = upload.single("photo");
 
-exports.processPhoto = (req, res, next) => {
+exports.processPhoto = handleAsyncError(async (req, res, next) => {
 	if (!req.file) return next();
 	req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-	sharp(req.file.buffer)
+	await sharp(req.file.buffer)
 		.resize(500, 500)
 		.toFormat("jpeg")
 		.jpeg({ quality: 90 })
 		.toFile(path.join(USER_IMAGES_DIRECTORY, req.file.filename));
 	next();
-};
+});
 
 const filterRequestBody = (requestBody, ...keysToFilter) => {
 	// Create a new object, that only contains keys that are to be filtered
