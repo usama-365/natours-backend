@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const User = require("../models/user.model");
 const handleAsyncError = require("../utils/handleAsyncError.util");
 const AppError = require("../utils/appError.util");
-const sendEmail = require("../utils/email.util");
+const Email = require("../utils/email.util");
 
 const signToken = id => jwt.sign({ id }, process.env.JWT_SECRET, {
 	expiresIn: process.env.JWT_EXPIRES_IN,
@@ -46,7 +46,8 @@ exports.signup = handleAsyncError(async (req, res, next) => {
 		passwordConfirm,
 		role,
 	});
-
+	const url = `${req.protocol}://${req.get("host")}/me`;
+	await new Email(user, url).sendWelcome();
 	return createAndSendJWTToken(user, 201, res);
 });
 
@@ -155,11 +156,11 @@ exports.forgotPassword = handleAsyncError(async (req, res, next) => {
 
 	// Send the email
 	try {
-		await sendEmail({
-			to: user.email,
-			subject: "Your password reset token (valid for 10 mins)",
-			message,
-		});
+		// await sendEmail({
+		// 	to: user.email,
+		// 	subject: "Your password reset token (valid for 10 mins)",
+		// 	message,
+		// });
 	} catch (error) {
 		// Incase of error, invalidate the token and send back error
 		user.passwordResetToken = user.passwordResetExpires = undefined;
