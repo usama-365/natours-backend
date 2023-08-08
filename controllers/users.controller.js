@@ -1,26 +1,30 @@
 const multer = require("multer");
 const path = require("path");
+const sharp = require("sharp");
 
 const User = require("../models/user.model");
 const AppError = require("../utils/appError.util");
 const handleAsyncError = require("../utils/handleAsyncError.util");
 const handlerFactory = require("./handler.factory");
 
-const multerStorage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, path.join(__dirname, "..", "public", "img", "users"));
-	},
-	filename: (req, file, cb) => {
-		const extension = file.mimetype.split("/")[1];
-		cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
-	},
-});
+const USER_IMAGES_DIRECTORY = path.join(__dirname, "..", "public", "img", "users");
+// const multerStorage = multer.diskStorage({
+// 	destination: (req, file, cb) => {
+// 		cb(null, path.join(__dirname, "..", "public", "img", "users"));
+// 	},
+// 	filename: (req, file, cb) => {
+// 		const extension = file.mimetype.split("/")[1];
+// 		cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
+// 	},
+// });
+
+const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
 	if (file.mimetype.startsWith("image")) {
 		cb(null, true);
 	} else {
-		cb(new AppError("Not an image! Please upload only images", 400), false);
+		cb(new AppError(400, "Not an image! Please upload only images"), false);
 	}
 };
 
@@ -30,6 +34,17 @@ const upload = multer({
 });
 
 exports.parsePhoto = upload.single("photo");
+
+exports.processPhoto = (req, res, next) => {
+	if (!req.file) return next();
+	req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+	sharp(req.file.buffer)
+		.resize(500, 500)
+		.toFormat("jpeg")
+		.jpeg({ quality: 90 })
+		.toFile(path.join(USER_IMAGES_DIRECTORY, req.file.filename));
+	next();
+};
 
 const filterRequestBody = (requestBody, ...keysToFilter) => {
 	// Create a new object, that only contains keys that are to be filtered
@@ -58,7 +73,7 @@ exports.updateCurrentUser = handleAsyncError(async (req, res, next) => {
 
 	// Also extract photo
 	if (req.file) filteredBody.photo = req.file.filename;
-	
+
 	const user = await User.findByIdAndUpdate(req.user._id, filteredBody, {
 		runValidators: true,
 		new: true,

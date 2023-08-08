@@ -10,6 +10,7 @@ const {
 	deleteCurrentUser,
 	getMe,
 	parsePhoto,
+	processPhoto,
 } = require("../controllers/users.controller");
 const {
 	signup,
@@ -35,7 +36,7 @@ router.patch("/resetPassword/:token", resetPassword);
 router.use(authenticate);
 router.get("/me", getMe, getUser);
 router.patch("/updateMyPassword", updatePassword);
-router.patch("/updateMe", parsePhoto, updateCurrentUser);
+router.patch("/updateMe", parsePhoto, processPhoto, updateCurrentUser);
 router.delete("/deleteMe", deleteCurrentUser);
 
 // REST endpoints for admin
