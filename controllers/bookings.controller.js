@@ -70,8 +70,8 @@ exports.webhookCheckout = handleAsyncError(async (req, res, next) => {
 	switch (event.type) {
 	case "checkout.session.completed":
 		const checkoutSessionCompleted = event.data.object;
-		const user = (await User.find({ email: checkoutSessionCompleted.customer_email })).i;
-		const price = checkoutSessionCompleted.line_items[0].price_data.unit_amount / 100;
+		const user = (await User.find({ email: checkoutSessionCompleted.customer_email })).id;
+		const price = checkoutSessionCompleted.amount_total;
 		const tour = checkoutSessionCompleted.client_reference_id;
 		await Booking.create({
 			user,
