@@ -17,6 +17,7 @@ const reviewRouter = require("./routers/reviews.router");
 const viewsRouter = require("./routers/views.router");
 const AppError = require("./utils/appError.util");
 const globalErrorHandler = require("./controllers/errors.controller");
+const { webhookCheckout } = require("./controllers/bookings.controller");
 
 const app = express();
 
@@ -26,35 +27,39 @@ app.set("views", path.join(__dirname, "views"));
 // Global middleware
 // Cross Origin Resource Sharing
 app.use(cors());
-app.options("*", cors()); // Not to set the app options, but to respond to OPTIONS preflight requests
+app.options("*", cors()); // Not to set the app options, but to respond to
+                          // OPTIONS preflight requests
 // Static file serving
 app.use(express.static(path.join(__dirname, "public")));
 // Setting HTTP response headers
 app.use(helmet({
-    contentSecurityPolicy: false,
-    // {
-    // 	directives: {
-    // 		"script-src": [ "'self'", "unpkg.com", "openstreetmap.org" ],
-    // 	},
-    // },
+	contentSecurityPolicy: false,
+	// {
+	// 	directives: {
+	// 		"script-src": [ "'self'", "unpkg.com", "openstreetmap.org" ],
+	// 	},
+	// },
 }));
 // Dev logging
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 // Rate limiting
 const limiter = rateLimit({
-    max: 100,
-    windowMs: 60 * 60 * 1000,
-    message: "Too many requests from this IP, please try again in an hour!",
+	max: 100,
+	windowMs: 60 * 60 * 1000,
+	message: "Too many requests from this IP, please try again in an hour!",
 });
 app.use("/api", limiter);
+// Stripe payment integration webhook endpoint (before json parsing of body
+// data)
+app.post("/webhook-checkout", express.raw({ type: "application/json" }), webhookCheckout);
 // Body parsing
 app.use(express.json({
-    limit: "10kb",
+	limit: "10kb",
 }));
 // URL parsing
 app.use(express.urlencoded({
-    extended: true,
-    limit: "10kb",
+	extended: true,
+	limit: "10kb",
 }));
 // Cookie parsing
 app.use(cookieParser());
@@ -64,14 +69,14 @@ app.use(mongoSanitize());
 app.use(xss());
 // Prevent parameter pollution
 app.use(hpp({
-    whitelist: [
-        "duration",
-        "ratingsAverage",
-        "ratingsQuantity",
-        "maxGroupSize",
-        "difficulty",
-        "price",
-    ],
+	whitelist: [
+		"duration",
+		"ratingsAverage",
+		"ratingsQuantity",
+		"maxGroupSize",
+		"difficulty",
+		"price",
+	],
 }));
 // Compression middleware to compress responses
 app.use(compression());
@@ -85,7 +90,7 @@ app.use("/api/v1/users", userRouter);
 
 // Invalid route
 app.all("*", (req, res, next) => {
-    next(new AppError(404, `Can't find ${req.originalUrl} on this server!`));
+	next(new AppError(404, `Can't find ${req.originalUrl} on this server!`));
 });
 
 // Error handler
